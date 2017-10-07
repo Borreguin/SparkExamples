@@ -1,0 +1,34 @@
+// Spark’s primary abstraction is a distributed collection of items called a Dataset.
+// Datasets can be done from several types of inputs (like HDFS files, or any other different files)
+./bin/spark-shell
+
+//creating a Dataset from README.md file 
+val textFile = spark.read.textFile("README.md")
+// actions using the variable textFile:
+textFile.count()
+textFile.first()
+
+//create new Dataset using a filter:
+var textWithSpark = textFile.filter(line => line.contains("Spark"))
+textWithSpark.count()
+
+// Example of operations using map and reduction:
+// .map maps a line to an integer value, creating a new Dataset.
+// .reduce is called inside this new Dataset to find the largest word count 
+textFile.map(line => line.split(" ").size).reduce((a, b) => if (a > b) a else b)
+
+// The latter can be written as: (use: import java.lang.Math)
+textFile.map(line => line.split(" ").size).reduce((a, b) => Math.max(a, b))
+
+// using commands of MapReduce sintax (Hadoop) - MapReduce implementation:
+// flatmap transforms the textline Dataset into a word Dataset.
+// GroupByKey groups words that are similar.
+// count counts the number of words that appear inside the word Dataset.
+ val wordCounts = textFile.flatMap(line => line.split(" ")).groupByKey(identity).count()
+ 
+ // To see the result of this line:
+ wordCounts.collect()
+ 
+ // ## Spark allows CACHING in memory for having a quick access to the data:
+ linesWithSpark.cache()
+ linesWithSpark.count()
