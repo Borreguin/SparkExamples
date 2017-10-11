@@ -26,9 +26,38 @@ textFile.map(line => line.split(" ").size).reduce((a, b) => Math.max(a, b))
 // count counts the number of words that appear inside the word Dataset.
  val wordCounts = textFile.flatMap(line => line.split(" ")).groupByKey(identity).count()
  
- // To see the result of this line:
- wordCounts.collect()
+// To see the result of this line:
+wordCounts.collect()
+
+// ## Spark allows CACHING in memory for having a quick access to the data:
+linesWithSpark.cache()
+linesWithSpark.count()
+
+
+// ### CREATING A NEW APPLICATION:
+# Your directory layout should look like this
+$ find .
+.
+./build.sbt
+./src
+./src/main
+./src/main/scala
+./src/main/scala/SimpleApp.scala
+
+# Package a jar containing your application
+$ sbt package
+...
+[info] Packaging {..}/{..}/target/scala-2.11/simple-project_2.11-1.0.jar
+
+# Use spark-submit to run your application
+$ YOUR_SPARK_HOME/bin/spark-submit \
+  --class "SimpleApp" \
+  --master local[4] \
+  target/scala-2.11/simple-project_2.11-1.0.jar
+...
+Lines with a: 46, Lines with b: 23
+
  
- // ## Spark allows CACHING in memory for having a quick access to the data:
- linesWithSpark.cache()
- linesWithSpark.count()
+ 
+ 
+ 
